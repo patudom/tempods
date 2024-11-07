@@ -1,5 +1,5 @@
 from glue.core import ComponentID, Data, Subset
-from glue.core.subset import AndState, CategorySubsetState
+from glue.core.subset import AndState, CategorySubsetState, RangeSubsetState
 import ipyvuetify as v
 from numpy import unique
 from traitlets import List, observe
@@ -14,25 +14,28 @@ class SubsetStateWidget(v.VuetifyTemplate):
     type_options = List().tag(sync=True)
     type_selections = List().tag(sync=True)
 
+
     def __init__(self, subset: Subset):
         super().__init__()
         self.subset = subset
         self.type_att: ComponentID = subset.data.id["PrimSource"]
         self.size_att: ComponentID = subset.data.id["Size_binned"]
         
+        self.type_state = CategorySubsetState(self.type_att, [])
+        self.size_state = RangeSubsetState(0, 0, self.size_att)
         self.type_options = list(unique(self.subset.data[self.type_att]))
-        self.size_options = list(unique(self.subset.data[self.size_att]))
-        self.type_selections = self.subset.data[self.type_att].codes
-        self.size_selections = self.subset.data[self.size_att].codes
-        self.type_state = CategorySubsetState(self.type_att, self.type_selections)
-        self.size_state = CategorySubsetState(self.size_att, self.size_selections)
+        self.size_options = [0, 1, 2]
+        self.type_selections = list(self.subset.data[self.type_att].codes)
+        self.size_selections = self.size_options
 
-    def _update_type_state(self, type_indices: List[int]):
-        self.type_state = CategorySubsetState(self.type_att, type_indices)
+    def _update_type_state(self, type_indices: list[str]):
+        self.type_state = CategorySubsetState(self.size_att, type_indices)
         self._update_state()
 
-    def _update_size_state(self, size_indices: List[str]):
-        self.size_state = CategorySubsetState(self.size_att, size_indices)
+    def _update_size_state(self, size_indices: list[int]):
+        low = (min(size_indices) + 1) ** 2
+        high = (max(size_indices) + 1) ** 2
+        self.size_state = RangeSubsetState(low, high, self.size_att)
         self._update_state()
 
     def _update_state(self):
@@ -41,3 +44,7 @@ class SubsetStateWidget(v.VuetifyTemplate):
     @observe('type_selections')
     def _on_type_selections_changed(self, change: dict):
         self._update_type_state(change["new"])
+        
+    @observe('size_selections')
+    def _on_size_selections_changed(self, change: dict):
+        self._update_size_state(sorted(change["new"]))

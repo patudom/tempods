@@ -38,7 +38,7 @@
         v-model="size_selections"
       >
         <v-list-item
-          v-for="(option, index) in selection_options"
+          v-for="(option, index) in size_options"
           :key="index"
           :value="index"
         >
