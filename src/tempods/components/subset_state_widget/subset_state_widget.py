@@ -25,10 +25,10 @@ class SubsetStateWidget(v.VuetifyTemplate):
         self.size_state = RangeSubsetState(0, 0, self.size_att)
         self.type_options = list(unique(self.subset.data[self.type_att]))
         self.size_options = [0, 1, 2]
-        self.type_selections = list(self.subset.data[self.type_att].codes)
+        self.type_selections = sorted(list(unique(self.subset.data[self.type_att].codes)))
         self.size_selections = self.size_options
 
-    def _update_type_state(self, type_indices: list[str]):
+    def _update_type_state(self, type_indices: list[int]):
         self.type_state = CategorySubsetState(self.size_att, type_indices)
         self._update_state()
 
@@ -43,8 +43,9 @@ class SubsetStateWidget(v.VuetifyTemplate):
 
     @observe('type_selections')
     def _on_type_selections_changed(self, change: dict):
-        self._update_type_state(change["new"])
+        self._update_type_state([int(c) for c in change["new"]])
         
     @observe('size_selections')
     def _on_size_selections_changed(self, change: dict):
+        print(sorted(change["new"]))
         self._update_size_state(sorted(change["new"]))
