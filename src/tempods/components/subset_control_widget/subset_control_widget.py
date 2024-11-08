@@ -9,8 +9,8 @@ from traitlets import List, observe
 from cosmicds.utils import load_template
 
 
-class SubsetStateWidget(v.VuetifyTemplate):
-    template = load_template("subset_state_widget.vue", __file__, traitlet=True).tag(sync=True)
+class SubsetControlWidget(v.VuetifyTemplate):
+    template = load_template("subset_control_widget.vue", __file__, traitlet=True).tag(sync=True)
     size_options = List().tag(sync=True)
     size_selections = List().tag(sync=True)
     type_options = List().tag(sync=True)
