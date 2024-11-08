@@ -15,6 +15,7 @@ class SubsetControlWidget(v.VuetifyTemplate):
     size_selections = List().tag(sync=True)
     type_options = List().tag(sync=True)
     type_selections = List().tag(sync=True)
+    type_colors = List().tag(sync=True)
 
     def __init__(self, data: Data, viewer: Viewer):
         super().__init__()
@@ -27,10 +28,10 @@ class SubsetControlWidget(v.VuetifyTemplate):
         self.size_options = ["Small", "Medium", "Large"]
         self.indices = list(product(range(len(self.type_options)), range(len(self.size_options))))
 
-        type_colors = ["red", "green", "blue", "purple"]
+        self.type_colors = ["red", "green", "blue", "purple"]
         self._layer_indices = {}
         for (idx_t, idx_s) in self.indices:
-            subset = data.new_subset(color=type_colors[idx_t])
+            subset = data.new_subset(color=self.type_colors[idx_t])
             subset.style.markersize = (idx_s + 1) ** 2
             state = self._subset_state(idx_t, idx_s)
             subset.subset_state = state

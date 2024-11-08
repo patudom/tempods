@@ -25,6 +25,7 @@
             <v-list-item-action>
               <v-checkbox
                 :input-value="active"
+                :color="type_colors[index]"
               />
             </v-list-item-action>
           </template>
@@ -51,6 +52,7 @@
             <v-list-item-action>
               <v-checkbox
                 :input-value="active"
+                :color="gray"
               />
             </v-list-item-action>
           </template>
