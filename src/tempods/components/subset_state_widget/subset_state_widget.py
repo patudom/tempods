@@ -1,11 +1,10 @@
 from glue.core import ComponentID, Data
-from glue.core.subset import AndState, CategorySubsetState, MaskSubsetState, RangeSubsetState, Subset, SubsetState
+from glue.core.subset import AndState, CategorySubsetState, RangeSubsetState
 from glue_jupyter.view import Viewer
 import ipyvuetify as v
 from itertools import product
-from numpy import indices, ndarray, unique
+from numpy import unique
 from traitlets import List, observe
-from typing import Dict, Tuple
 
 from cosmicds.utils import load_template
 
@@ -28,13 +27,16 @@ class SubsetStateWidget(v.VuetifyTemplate):
         self.size_options = ["Small", "Medium", "Large"]
         self.indices = list(product(range(len(self.type_options)), range(len(self.size_options))))
 
+        type_colors = ["red", "green", "blue", "purple"]
         self._layer_indices = {}
         for (idx_t, idx_s) in self.indices:
-            subset = data.new_subset()
+            subset = data.new_subset(color=type_colors[idx_t])
+            subset.style.markersize = (idx_s + 1) ** 2
             state = self._subset_state(idx_t, idx_s)
             subset.subset_state = state
             self.viewer.add_subset(subset)
-            self._layer_indices[(idx_t, idx_s)] = len(self.viewer.layers) - 1
+            index = len(self.viewer.layers) - 1
+            self._layer_indices[(idx_t, idx_s)] = index
 
         self.type_selections = sorted(list(unique(data[self.type_att].codes)))
         self.size_selections = list(range(len(self.size_options)))
