@@ -41,6 +41,9 @@ class SubsetControlWidget(v.VuetifyTemplate):
         self.type_selections = sorted(list(unique(data[self.type_att].codes)))
         self.size_selections = list(range(len(self.size_options)))
 
+        self.observe(self._on_type_selections_changed, names=["type_selections"])
+        self.observe(self._on_size_selections_changed, names=["size_selections"])
+
     def _type_state(self, type_index: int) -> CategorySubsetState:
         return CategorySubsetState(self.type_att, [type_index])
     
@@ -58,10 +61,8 @@ class SubsetControlWidget(v.VuetifyTemplate):
         for t, s in self.indices:
             self.viewer.layers[self._layer_index(t, s)].state.visible = (t in type_indices) and (s in size_indices) 
 
-    @observe('type_selections')
     def _on_type_selections_changed(self, change: dict):
         self._update_visibilities(change["new"], self.size_selections)
         
-    @observe('size_selections')
     def _on_size_selections_changed(self, change: dict):
         self._update_visibilities(self.type_selections, change["new"])
