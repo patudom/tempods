@@ -16,9 +16,17 @@
     <v-main>
       <v-content>
         <v-container fluid id="main-container">
-          <jupyter-widget id="powerplant-widget" :widget="extra_widgets.powerplant" />
-          <jupyter-widget id="map-viewer" :widget="viewers.map" />
-          <jupyter-widget id="timeseries-viewer" :widget="viewers.timeseries" />
+          <v-row>
+            <v-col>
+              <v-row>
+                <jupyter-widget id="map-viewer" :widget="viewers.map" />
+                <jupyter-widget id="powerplant-widget" :widget="extra_widgets.powerplant" />
+              </v-row>
+              <v-row>
+                <jupyter-widget id="timeseries-viewer" :widget="viewers.timeseries" />
+              </v-row>
+            </v-col>
+          </v-row>
         </v-container>
       </v-content>
     </v-main>
@@ -70,5 +78,19 @@ body {
 
 #powerplant-widget {
   width: 200px;
+}
+
+#map-viewer {
+  width: 66%;
+}
+
+#map-viewer, #powerplant-widget, #timeseries-viewer {
+  margin: 0.5em;
+  padding: 0.5em;
+  width: fit-content;
+}
+
+#timeseries-viewer {
+  outline: 1px solid white; 
 }
 </style>
