@@ -4,7 +4,7 @@
     variant="outlined"
     class="subset_state_widget"
   >
-    <v-card-title>Select displayed data</v-card-title>
+    <v-card-title>Select Power Plants to Show</v-card-title>
     <v-list>
       <v-list-title>Plant type</v-list-title>
       <v-list-item-group
