@@ -145,8 +145,8 @@ class TempoApp(v.VuetifyTemplate):
                 map_viewer.layers[0].state.opacity = change.new
         opacity_slider.observe(update_opacity, 'value')
 
-        opacity_label = WidgetControl(widget=widgets.Label('Opacity:'), position='topright')
-        opacity_control = WidgetControl(widget=opacity_slider, position='topright')
+        opacity_label = WidgetControl(widget=widgets.Label('Opacity:'), position='topleft')
+        opacity_control = WidgetControl(widget=opacity_slider, position='topleft')
         map_viewer.map.add(opacity_label)
         map_viewer.map.add(opacity_control)
         map_viewer.map.add(WidgetControl(widget=date_chooser, position='bottomleft'))
@@ -162,6 +162,17 @@ class TempoApp(v.VuetifyTemplate):
                 slider.value = slider.options[min_index][1]
 
         timeseries_viewer.add_event_callback(callback = update_slider_value, events=['click'])
+
+
+        file = open("colorbar.png", "rb")
+        image = file.read()
+        colorbar = widgets.Image(
+                            value=image,
+                            format='png',
+                            width=100,
+                            height=400,
+                        )
+        map_viewer.map.add(WidgetControl(widget=colorbar, position='bottomright'))
 
 
     def add_viewer(self, viewer: Viewer, label: str):
