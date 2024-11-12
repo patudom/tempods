@@ -15,7 +15,7 @@ from tempods.components.subset_control_widget import SubsetControlWidget
 from glue.config import colormaps
 from ipyleaflet import Map, Marker, LayersControl, TileLayer, WidgetControl, GeoJSON
 from datetime import date, datetime, timezone, timedelta
-from ipywidgets import SelectionSlider, Layout, Label, VBox, Dropdown, DatePicker, HTML, AppLayout
+from ipywidgets import SelectionSlider, Layout, Label, VBox, Dropdown, DatePicker, HTML, AppLayout, widgets, FloatSlider
 import pandas as pd
 import numpy as np
 
@@ -127,6 +127,24 @@ class TempoApp(v.VuetifyTemplate):
         control = WidgetControl(widget=slider, position='bottomleft')
         map_viewer.map.add(control)
         
+        opacity_slider = FloatSlider(description='', value=1, min=0, max=1, orientation='vertical', readout=False)
+        opacity_slider.layout = {"width":"28px"}
+
+        # Doing the link this simple way does not work, and causes the opacity to be reset
+        # as we scrub through timesteps. Instead, we need to do a callback on the glue state attribute
+        # mylink = widgets.jslink((opacity_slider, 'value'), (map_viewer.map.layers[1], 'opacity'))
+
+        def update_opacity(change):
+            if change.new != change.old:
+                map_viewer.layers[0].state.opacity = change.new
+        opacity_slider.observe(update_opacity, 'value')
+
+        opacity_label = WidgetControl(widget=widgets.Label('Opacity:'), position='topright')
+        opacity_control = WidgetControl(widget=opacity_slider, position='topright')
+        map_viewer.map.add(opacity_label)
+        map_viewer.map.add(opacity_control)
+        map_viewer.map.add(WidgetControl(widget=date_chooser, position='bottomleft'))
+
         def update_slider_value(event):
             if 'domain' in event and 'x' in event['domain']:
                 value = event['domain']['x']
