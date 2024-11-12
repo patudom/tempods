@@ -103,6 +103,19 @@ class TempoApp(v.VuetifyTemplate):
         slider.observe(update_image, 'value')
         control = WidgetControl(widget=slider, position='bottomleft')
         map_viewer.map.add(control)
+        
+        def update_slider_value(event):
+            if 'domain' in event and 'x' in event['domain']:
+                value = event['domain']['x']
+                t = [i[1] for i in slider.options]
+                smax = max(t)
+                smin = min(t)
+                t = [abs(((i - smin) / (smax - smin)) - value) for i in t]
+                min_index = min(range(len(t)), key = t.__getitem__)
+                slider.value = slider.options[min_index][1]
+
+        timeseries_viewer.add_event_callback(callback = update_slider_value, events=['click'])
+
 
     def add_viewer(self, viewer: Viewer, label: str):
         current_viewers = {k: v for k, v in self.viewers.items()}
