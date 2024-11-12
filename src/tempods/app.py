@@ -6,13 +6,14 @@ from ipywidgets import DOMWidget, widget_serialization
 from traitlets import Dict, Instance
 
 from os import getenv
+import json
 import glue_jupyter as gj
 from glue_map.data import RemoteGeoData_ArcGISImageServer, Data
 from glue_map.map.state import MapViewerState
 from tempods.components.subset_control_widget import SubsetControlWidget
 
 from glue.config import colormaps
-from ipyleaflet import Map, Marker, LayersControl, TileLayer, WidgetControl
+from ipyleaflet import Map, Marker, LayersControl, TileLayer, WidgetControl, GeoJSON
 from datetime import date, datetime, timezone, timedelta
 from ipywidgets import SelectionSlider, Layout, Label, VBox, Dropdown, DatePicker, HTML, AppLayout
 import pandas as pd
@@ -33,8 +34,9 @@ class TempoApp(v.VuetifyTemplate):
         super().__init__(*args, **kwargs)
 
         self.glue_app = gj.jglue()
-        tempo_data = RemoteGeoData_ArcGISImageServer("https://gis.earthdata.nasa.gov/image/rest/services/C2930763263-LARC_CLOUD/",
-                                            name='TEMPO')
+        asdc_url = "https://gis.earthdata.nasa.gov/image/rest/services/C2930763263-LARC_CLOUD/"
+        tempo_data = RemoteGeoData_ArcGISImageServer(asdc_url,
+                                                     name='TEMPO')
 
         power_data = self.glue_app.load_data("Power_Plants.csv")
         self.glue_app.add_data(tempo_data)
@@ -49,12 +51,33 @@ class TempoApp(v.VuetifyTemplate):
         small = (power_data['Install_MW'] <= 10)
         power_data.add_component(big*9 + med*4 + small*1, label='Size_binned')
 
-        stadia_url = "https://tiles.stadiamaps.com/tiles/stamen_toner_lines/{z}/{x}/{y}{r}.png"
+        with open('coastlines.geojson', 'r') as f:
+            coastdata = json.load(f)
+        geo_json = GeoJSON(
+            data=coastdata,
+            style={
+                'color': 'black',
+                'opacity': 1,
+                'fillOpacity': 0,
+                'weight': 0.5
+            },
+        )
+
+        stadia_base_url = "https://tiles.stadiamaps.com/tiles/stamen_toner_lines/{z}/{x}/{y}{r}.png"
+        stadia_labels_url="https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png"
+
         stadia_api_key = getenv("STADIA_API_KEY")
         if stadia_api_key is not None:
-            stadia_url += f"?api_key={stadia_api_key}"
-        map_state = MapViewerState(basemap=TileLayer(url=stadia_url))
+            stadia_base_url += f"?api_key={stadia_api_key}"
+            stadia_labels_url += f"?api_key={stadia_api_key}"
+        map_state = MapViewerState(basemap=TileLayer(url=stadia_base_url))
         map_viewer = self.glue_app.new_data_viewer("map", data=tempo_data, state=map_state, show=False)
+        map_viewer.figure_widget.layout = {"width": "900px", "height": "500px"}
+        map_viewer.map.panes = {"labels": {"zIndex": 650}}
+
+        _ = map_viewer.map.add(TileLayer(url=stadia_labels_url, pane='labels'))
+        _ = map_viewer.map.add(geo_json)
+
         powerplant_widget = SubsetControlWidget(power_data, map_viewer)
 
         self.add_widget(powerplant_widget, "powerplant")
@@ -80,7 +103,7 @@ class TempoApp(v.VuetifyTemplate):
         time_strings = [convert_from_milliseconds(t) for t in time_values]  
         time_options = [(time_strings[i], time_values[i]) for i in range(len(time_values))]
         
-        slider = SelectionSlider(description='', options=time_options,layout=Layout(width='700px', height='20px'))
+        slider = SelectionSlider(description='Time (UTC):', options=time_options, layout=Layout(width='700px', height='25px'))
         dt = datetime.fromtimestamp((slider.value)/ 1000, tz=timezone(offset=timedelta(hours=0), name="UTC"))
         timeseries_viewer.timemark.x = np.array([dt, dt]).astype('datetime64[ms]')
         
