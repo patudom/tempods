@@ -91,6 +91,12 @@ class TempoApp(v.VuetifyTemplate):
         timeseries_viewer.figure.axes[0].label_offset = "40"
         timeseries_viewer.figure.axes[0].label = "Time (UTC)"
 
+        timeseries_viewer.figure.axes[0].label_color = "white"
+        timeseries_viewer.figure.axes[1].label_color = "white"
+
+        timeseries_viewer.figure.axes[0].tick_style = {"stroke": "white"}
+        timeseries_viewer.figure.axes[1].tick_style = {"stroke": "white"}
+
         self.add_viewer(timeseries_viewer, "timeseries")
         
         def convert_from_milliseconds(milliseconds_since_epoch):

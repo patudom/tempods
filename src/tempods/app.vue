@@ -91,6 +91,6 @@ body {
 }
 
 #timeseries-viewer {
-  outline: 1px solid white; 
+  width: 66%;
 }
 </style>
