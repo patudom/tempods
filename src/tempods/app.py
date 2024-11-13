@@ -163,18 +163,6 @@ class TempoApp(v.VuetifyTemplate):
 
         timeseries_viewer.add_event_callback(callback = update_slider_value, events=['click'])
 
-
-        file = open("colorbar.png", "rb")
-        image = file.read()
-        colorbar = widgets.Image(
-                            value=image,
-                            format='png',
-                            width=100,
-                            height=400,
-                        )
-        map_viewer.map.add(WidgetControl(widget=colorbar, position='bottomright'))
-
-
     def add_viewer(self, viewer: Viewer, label: str):
         current_viewers = {k: v for k, v in self.viewers.items()}
         current_viewers.update({label: viewer._layout})

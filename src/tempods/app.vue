@@ -20,6 +20,7 @@
             <v-col>
               <v-row>
                 <jupyter-widget id="map-viewer" :widget="viewers.map" />
+                <v-img id="colorbar" src="colorbar.png" height="400" width="100" max-width="100" contain /> 
                 <jupyter-widget id="powerplant-widget" :widget="extra_widgets.powerplant" />
               </v-row>
               <v-row>
@@ -92,5 +93,9 @@ body {
 
 #timeseries-viewer {
   width: 66%;
+}
+
+.row {
+  align-items: center;
 }
 </style>
