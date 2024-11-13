@@ -97,6 +97,9 @@ class TempoApp(v.VuetifyTemplate):
         timeseries_viewer.figure.axes[0].tick_style = {"stroke": "white"}
         timeseries_viewer.figure.axes[1].tick_style = {"stroke": "white"}
 
+
+        timeseries_viewer.figure.axes[0].tick_format = "%H:%M"
+
         self.add_viewer(timeseries_viewer, "timeseries")
         
         def convert_from_milliseconds(milliseconds_since_epoch):
