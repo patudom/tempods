@@ -70,7 +70,7 @@ class TempoApp(v.VuetifyTemplate):
         if stadia_api_key is not None:
             stadia_base_url += f"?api_key={stadia_api_key}"
             stadia_labels_url += f"?api_key={stadia_api_key}"
-        map_state = MapViewerState(basemap=TileLayer(url=stadia_base_url))
+        map_state = MapViewerState(basemap=TileLayer(url=stadia_base_url), center=(40, -100), zoom_level=4)
         map_viewer = self.glue_app.new_data_viewer("map", data=tempo_data, state=map_state, show=False)
         map_viewer.figure_widget.layout = {"width": "900px", "height": "500px"}
         map_viewer.map.panes = {"labels": {"zIndex": 650}}
