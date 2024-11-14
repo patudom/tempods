@@ -72,7 +72,7 @@ class TempoApp(v.VuetifyTemplate):
             stadia_labels_url += f"?api_key={stadia_api_key}"
         map_state = MapViewerState(basemap=TileLayer(url=stadia_base_url), center=(40, -100), zoom_level=4)
         map_viewer = self.glue_app.new_data_viewer("map", data=tempo_data, state=map_state, show=False)
-        map_viewer.figure_widget.layout = {"width": "900px", "height": "500px"}
+        map_viewer.figure_widget.layout = {"width": "800px", "height": "450px"}
         map_viewer.map.panes = {"labels": {"zIndex": 650}}
 
         _ = map_viewer.map.add(TileLayer(url=stadia_labels_url, pane='labels'))
@@ -84,15 +84,19 @@ class TempoApp(v.VuetifyTemplate):
         self.add_viewer(map_viewer, "map")
 
         timeseries_viewer = self.glue_app.new_data_viewer('timeseries', data=tempo_data, show=False)
+        timeseries_viewer.figure_widget.layout = {"height": "400px"}
         timeseries_viewer.figure.axes[1].label_offset = "-50"
         timeseries_viewer.figure.axes[1].tick_format = ".0f"
-        timeseries_viewer.figure.axes[1].label = "Amount of NO2 (10^14 molecules/cm^2)"
+        timeseries_viewer.figure.axes[1].label = "Average NO2 within region (10^14 molecules/cm^2)"
 
         timeseries_viewer.figure.axes[0].label_offset = "40"
         timeseries_viewer.figure.axes[0].label = "Time (UTC)"
 
         timeseries_viewer.figure.axes[0].label_color = "white"
         timeseries_viewer.figure.axes[1].label_color = "white"
+
+        timeseries_viewer.state.y_min = 0
+        timeseries_viewer.state.y_max *= 1.1
 
         timeseries_viewer.figure.axes[0].tick_style = {"stroke": "white"}
         timeseries_viewer.figure.axes[1].tick_style = {"stroke": "white"}
@@ -112,7 +116,7 @@ class TempoApp(v.VuetifyTemplate):
         time_strings = [convert_from_milliseconds(t) for t in time_values]  
         time_options = [(time_strings[i], time_values[i]) for i in range(len(time_values))]
         
-        slider = SelectionSlider(description='Time (UTC):', options=time_options, layout=Layout(width='700px', height='25px'))
+        slider = SelectionSlider(description='Time (UTC):', options=time_options, layout=Layout(width='600px', height='25px'))
         dt = datetime.fromtimestamp((slider.value)/ 1000, tz=timezone(offset=timedelta(hours=0), name="UTC"))
         timeseries_viewer.timemark.x = np.array([dt, dt]).astype('datetime64[ms]')
         
