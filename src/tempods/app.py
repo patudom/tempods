@@ -121,7 +121,7 @@ class TempoApp(v.VuetifyTemplate):
         timeseries_viewer.timemark.x = np.array([dt, dt]).astype('datetime64[ms]')
         
         date_chooser = DatePicker(description='Pick a Date')
-        date_chooser.value = date(2024, 10, 15)
+        date_chooser.value = date(2024, 11, 13)
         def update_image(change):
             map_viewer.layers[0].state.timestep = change.new
             dt = datetime.fromtimestamp((change.new)/ 1000, tz=timezone(offset=timedelta(hours=0), name="UTC"))
