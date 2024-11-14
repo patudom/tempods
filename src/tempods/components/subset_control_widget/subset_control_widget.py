@@ -39,8 +39,9 @@ class SubsetControlWidget(v.VuetifyTemplate):
             index = len(self.viewer.layers) - 1
             self._layer_indices[(idx_t, idx_s)] = index
 
-        self.type_selections = sorted(list(unique(data[self.type_att].codes)))
-        self.size_selections = list(range(len(self.size_options)))
+        self.type_selections = []
+        self.size_selections = []
+        self._update_visibilities(self.type_selections, self.size_selections)
 
         self.observe(self._on_type_selections_changed, names=["type_selections"])
         self.observe(self._on_size_selections_changed, names=["size_selections"])
