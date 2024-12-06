@@ -28,7 +28,7 @@ class SubsetControlWidget(v.VuetifyTemplate):
         self.size_options = ["Small", "Medium", "Large"]
         self.indices = list(product(range(len(self.type_options)), range(len(self.size_options))))
 
-        self.type_colors = ["#1b9e77", "#d95f02", "#7570b3", "#e7298a"]
+        self.type_colors = ["#1b9e77", "#00008B", "#7570b3", "#00FFFF"]
         self._layer_indices = {}
         for (idx_t, idx_s) in self.indices:
             subset = data.new_subset(color=self.type_colors[idx_t], alpha=1)
